@@ -23,7 +23,7 @@ type CustomComment = {
   userName: string
   userIconUrl: string
   userComment: string
-  id: string
+  commentId: string
   createdAt: string
 }
 
