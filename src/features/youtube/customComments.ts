@@ -86,6 +86,7 @@ const retrieveLiveComments = async (
   if (comments.length === 0) {
     return []
   }
+  console.log("fetchedCommentIds=",fetchedCommentIds);
 
   return comments
 }
