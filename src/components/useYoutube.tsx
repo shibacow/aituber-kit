@@ -3,7 +3,7 @@ import homeStore from '@/features/stores/home'
 import settingsStore from '@/features/stores/settings'
 import { fetchAndProcessComments } from '@/features/youtube/customComments'
 
-const INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS = 10000 // 10秒
+const INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS = 1000 // 1秒
 
 interface Params {
   handleSendChat: (text: string) => Promise<void>
