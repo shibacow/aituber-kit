@@ -16,27 +16,7 @@ export const getLiveChatId = async (
   liveId: string,
   youtubeKey: string
 ): Promise<string> => {
-  const params = {
-    part: 'liveStreamingDetails',
-    id: liveId,
-    key: youtubeKey,
-  }
-  const query = new URLSearchParams(params)
-  const response = await fetch(
-    `https://youtube.googleapis.com/youtube/v3/videos?${query}`,
-    {
-      method: 'get',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  )
-  const json = await response.json()
-  if (json.items == undefined || json.items.length == 0) {
-    return ''
-  }
-  const liveChatId = json.items[0].liveStreamingDetails.activeLiveChatId
-  return liveChatId
+  return liveId;
 }
 
 type CustomComment = {
@@ -55,10 +35,8 @@ const retrieveLiveComments = async (
 ): Promise<CustomComments> => {
   console.log('[customComments] retrieveLiveComments')
   let url =
-    'https://youtube.googleapis.com/youtube/v3/liveChat/messages?liveChatId=' +
-    activeLiveChatId +
-    '&part=authorDetails%2Csnippet&key=' +
-    youtubeKey
+    'http://192.168.3.21:6001/?live_id=' +
+    activeLiveChatId 
   if (youtubeNextPageToken !== '' && youtubeNextPageToken !== undefined) {
     url = url + '&pageToken=' + youtubeNextPageToken
   }
@@ -68,18 +46,23 @@ const retrieveLiveComments = async (
       'Content-Type': 'application/json',
     },
   })
-  const json = await response.json()
-  const items = json.items
-  setYoutubeNextPageToken(json.nextPageToken)
+  type ResponseJson = {
+    status: any;
+    comments: any[];
+  };
+  
+  const json: ResponseJson = await response.json(); //
+  console.log('[customComments] fetched json:')
+  console.log(json)
+  const items = json.comments
+  console.log('[customComments] fetched items:')
+  console.log(items)
 
   const comments = items
     .map((item: any) => ({
-      userName: item.authorDetails.displayName,
-      userIconUrl: item.authorDetails.profileImageUrl,
-      userComment:
-        item.snippet.textMessageDetails?.messageText ||
-        item.snippet.superChatDetails?.userComment ||
-        '',
+      userName: item.user_name,
+      userIconUrl: item.profile_image_url,
+      userComment:item.comment || '',
     }))
     .filter(
       (comment: any) =>
