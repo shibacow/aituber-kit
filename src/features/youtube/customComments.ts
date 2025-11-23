@@ -29,6 +29,8 @@ type CustomComment = {
 
 type CustomComments = CustomComment[]
 
+const fetchedCommentIds = new Set<string>()
+
 const retrieveLiveComments = async (
   activeLiveChatId: string,
   youtubeKey: string,
@@ -72,6 +74,14 @@ const retrieveLiveComments = async (
       (comment: any) =>
         comment.userComment !== '' && !comment.userComment.startsWith('#')
     )
+    .filter((comment: any) => {
+      if (fetchedCommentIds.has(comment.commentId)) {
+        return false
+      }
+
+      fetchedCommentIds.add(comment.commentId)
+      return true
+    })
 
   if (comments.length === 0) {
     return []
