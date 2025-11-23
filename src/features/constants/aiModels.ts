@@ -17,7 +17,11 @@ interface ModelInfo {
  */
 const modelDefinitions: Record<AIService, ModelInfo[]> = {
   openai: [
-    { name: 'gpt-4.1', multiModal: true, isDefault: true },
+    { name: 'gpt-5.1', multiModal: true},
+    { name: 'gpt-5', multiModal: true},
+    { name: 'gpt-5-mini', multiModal: true ,isDefault: true},
+    { name: 'gpt-5-nano', multiModal: true },
+    { name: 'gpt-4.1', multiModal: true },
     { name: 'gpt-4.1-mini', multiModal: true },
     { name: 'gpt-4.1-nano', multiModal: true },
     { name: 'gpt-4o', multiModal: true },
