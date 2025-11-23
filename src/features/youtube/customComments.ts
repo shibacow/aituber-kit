@@ -38,12 +38,7 @@ const retrieveLiveComments = async (
   setYoutubeNextPageToken: (token: string) => void
 ): Promise<CustomComments> => {
   console.log('[customComments] retrieveLiveComments')
-  let url =
-    'http://192.168.3.21:6001/?live_id=' +
-    activeLiveChatId 
-  if (youtubeNextPageToken !== '' && youtubeNextPageToken !== undefined) {
-    url = url + '&pageToken=' + youtubeNextPageToken
-  }
+  let url =  '/api/customhost/live_comments?live_id=' +encodeURIComponent(activeLiveChatId)
   const response = await fetch(url, {
     method: 'get',
     headers: {
