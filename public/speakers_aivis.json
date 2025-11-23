@@ -1,38 +1,22 @@
 [
   {
-    "speaker": "Anneli/ノーマル",
-    "id": 888753760
+    "speaker": "凛音エル/ノーマル",
+    "id": 1388823424
   },
   {
-    "speaker": "Anneli/通常",
-    "id": 888753761
+    "speaker": "凛音エル/Angry",
+    "id": 1388823425
   },
   {
-    "speaker": "Anneli/テンション高め",
-    "id": 888753762
+    "speaker": "凛音エル/Fear",
+    "id": 1388823426
   },
   {
-    "speaker": "Anneli/落ち着き",
-    "id": 888753763
+    "speaker": "凛音エル/Happy",
+    "id": 1388823427
   },
   {
-    "speaker": "Anneli/上機嫌",
-    "id": 888753764
-  },
-  {
-    "speaker": "Anneli/怒り・悲しみ",
-    "id": 888753765
-  },
-  {
-    "speaker": "Anneli (NSFW)/ノーマル",
-    "id": 1196801504
-  },
-  {
-    "speaker": "Anneli_Tsukuyomi/ノーマル",
-    "id": 40618528
-  },
-  {
-    "speaker": "fumifumi/ノーマル",
-    "id": 606865152
+    "speaker": "凛音エル/Sad",
+    "id": 1388823428
   }
 ]
