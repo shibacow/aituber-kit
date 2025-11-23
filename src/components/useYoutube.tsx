@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import homeStore from '@/features/stores/home'
 import settingsStore from '@/features/stores/settings'
-import { fetchAndProcessComments } from '@/features/youtube/youtubeComments'
+import { fetchAndProcessComments } from '@/features/youtube/customComments'
 
 const INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS = 10000 // 10秒
 
@@ -27,7 +27,7 @@ const useYoutube = ({ handleSendChat }: Params) => {
       return
     }
 
-    console.log('Call fetchAndProcessComments !!!')
+    console.log('Call fetchAndProcessComments from customComments.ts !!!')
     await fetchAndProcessComments(handleSendChat)
   }, [handleSendChat])
 
