@@ -23,6 +23,8 @@ type CustomComment = {
   userName: string
   userIconUrl: string
   userComment: string
+  id: string
+  createdAt: string
 }
 
 type CustomComments = CustomComment[]
@@ -63,6 +65,8 @@ const retrieveLiveComments = async (
       userName: item.user_name,
       userIconUrl: item.profile_image_url,
       userComment:item.comment || '',
+      commentId: item.id,
+      createdAt: item.created_at,
     }))
     .filter(
       (comment: any) =>
