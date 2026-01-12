@@ -5,24 +5,14 @@ export type BcsrvWebSocketHandlers = {
   onClose?: (event: CloseEvent) => void
 }
 
-const getEnvValue = (key: string): string | undefined => {
-  return process.env[key] || process.env[`NEXT_PUBLIC_${key}`]
-}
-
 const buildWebSocketUrl = (): string => {
-  const endpoint =
-    getEnvValue('BCSRV_WEBSOCKET_URL') || getEnvValue('BCSRV_WS_URL')
+  const endpoint = process.env.NEXT_PUBLIC_BCSRV_WEBSOCKET_URL;
 
   if (!endpoint) {
     throw new Error('BCSRV_WEBSOCKET_URL is not set')
   }
 
   const url = new URL(endpoint)
-  const bcsrvKey = getEnvValue('BCSRV_KEY')
-  if (bcsrvKey && !url.searchParams.has('bcsrv_key')) {
-    url.searchParams.set('bcsrv_key', bcsrvKey)
-  }
-
   return url.toString()
 }
 
@@ -52,14 +42,17 @@ export class BcsrvWebSocketClient {
     if (typeof WebSocket === 'undefined') {
       throw new Error('WebSocket is not available in this environment')
     }
+    console.log(process.env.NEXT_PUBLIC_BCSRV_WEBSOCKET_URL)
 
-    const ws = new WebSocket(buildWebSocketUrl())
+    const ws = new WebSocket(buildWebSocketUrl());
     ws.addEventListener('open', (event) => {
+      this.sub()
       this.startPing()
       this.handlers.onOpen?.(event)
     })
     ws.addEventListener('message', (event) => {
       const parsed = parseMessage(event.data)
+      console.log(parsed);
       this.handlers.onMessage?.(parsed, event)
     })
     ws.addEventListener('error', (event) => this.handlers.onError?.(event))
@@ -70,6 +63,13 @@ export class BcsrvWebSocketClient {
 
     this.websocket = ws
     return ws
+  }
+  private sub(): void {
+      if (this.websocket?.readyState === WebSocket.OPEN) {
+        const bcsrvKey = process.env.NEXT_PUBLIC_BCSRV_KEY
+        console.log(`SUB\t${bcsrvKey}`);
+        this.websocket.send(`SUB\t${bcsrvKey}`)
+      }
   }
 
   send(payload: unknown): void {
