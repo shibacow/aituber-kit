@@ -4,7 +4,7 @@ import settingsStore from '@/features/stores/settings'
 import { fetchAndProcessComments } from '@/features/youtube/customComments'
 import { BcsrvWebSocketClient } from '@/features/youtube/bcsrvWebSocketClient'
 
-const INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS = 1000 // 1秒
+const INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS = 20 * 1000 // 20秒
 
 interface Params {
   handleSendChat: (text: string) => Promise<void>

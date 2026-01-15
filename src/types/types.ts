@@ -1,7 +1,7 @@
 export const BCSVR_MESSAGE_TYPE = {
   COMMENT: 1,
-  JOINED: 2,
-  GIFT_SENT: 3,
+  JOINED: 3,
+  GIFT_SENT: 35,
   FOLLOWED: 4,
   LIVE_ENDED: 11,
   LIVE_STREAMING_LOW_QUALITY: 21,
@@ -37,6 +37,8 @@ export interface BcsvrGiftMessage extends BcsvrMessage {
   coins: string; // コイン数
   iurl: string; // プロフィール画像URL
   burl?: string; // バッジ画像URL
+  speech?: string; // 音声読み上げテキスト
+
 }
 
 export interface BcsvrFollowedMessage extends BcsvrMessage {
@@ -47,11 +49,23 @@ export interface BcsvrFollowedMessage extends BcsvrMessage {
   burl?: string; // バッジ画像URL
 }
 
+export interface BcsvrJoinedMessage extends BcsvrMessage {
+  t: typeof BCSVR_MESSAGE_TYPE.JOINED;
+  u: string; // UserID
+  ac: string; // ユーザー名
+  speech: string;
+  iurl:string;
+  created_at:number;
+}
+
+
 export type BcsvrAnyMessage =
   | BcsvrCommentMessage
   | BcsvrGiftMessage
   | BcsvrFollowedMessage
-  | BcsvrMessage;
+  | BcsvrMessage
+  | BcsvrJoinedMessage 
+  ;
 
 export interface BcsvrConfig {
   host: string;

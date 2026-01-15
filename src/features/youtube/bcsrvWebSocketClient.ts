@@ -74,16 +74,36 @@ export class BcsrvWebSocketClient {
     })
     ws.addEventListener('message', (event) => {
       const parsed =  handleMessage(event.data)
+      console.log(parsed);
       if (parsed) {
         if (parsed.t === BCSVR_MESSAGE_TYPE.COMMENT) {
           useCommentsStore.getState().addComment({
-            id: parsed.lci,
+            id: parsed.u,
             userName: parsed.ac,
-            message: parsed.cm,
-            timestamp: new Date(parsed.created_at * 1000).toISOString(),
+            message: parsed.speech,
+            timestamp: null,
           });
         }
+        if (parsed.t === BCSVR_MESSAGE_TYPE.GIFT_SENT) {
+          useCommentsStore.getState().addComment({
+            id: parsed.u,
+            userName: parsed.ac,
+            message: parsed.speech,
+            timestamp: null,
+          });
+        }
+        if (parsed.t === BCSVR_MESSAGE_TYPE.JOINED) {
+          useCommentsStore.getState().addComment({
+            id: parsed.u,
+            userName: parsed.ac,
+            message: parsed.speech,
+            timestamp: null,
+          });
+        }
+        const wsComments = useCommentsStore.getState().comments;
+        console.log(`wsComment=${wsComments}`)
         this.handlers.onMessage?.(parsed, event)
+
       }
     })
     ws.addEventListener('error', (event) => this.handlers.onError?.(event))

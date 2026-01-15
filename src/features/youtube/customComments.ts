@@ -19,7 +19,7 @@ export const getLiveChatId = async (
   return liveId;
 }
 
-import { Comment } from '@/features/stores/useCommentsStore'
+import { useCommentsStore, Comment } from '@/features/stores/useCommentsStore'
 
 const fetchedCommentIds = new Set<string>()
 
@@ -115,23 +115,31 @@ export const fetchAndProcessComments = async (
       }
       settingsStore.setState({ youtubeContinuationCount: 0 })
 
-      // コメントを取得
-      const comments = await retrieveLiveComments(
+      // WebSocketコメントを取得してストアをクリア
+      const wsComments = useCommentsStore.getState().comments;
+      useCommentsStore.getState().clearComments();
+
+      // APIコメントを取得
+      const apiComments = await retrieveLiveComments(
         liveChatId,
         ss.youtubeApiKey,
         ss.youtubeNextPageToken,
         (token: string) => settingsStore.setState({ youtubeNextPageToken: token })
       )
+
+      // コメントを結合
+      const allComments = [...wsComments, ...apiComments];
+
       // ランダムなコメントを選択して送信
-      if (comments.length > 0) {
+      if (allComments.length > 0) {
         settingsStore.setState({ youtubeNoCommentCount: 0 })
         settingsStore.setState({ youtubeSleepMode: false })
         let selectedComment = ''
         if (ss.conversationContinuityMode) {
-          selectedComment = await getBestComment(chatLog, comments)
+          selectedComment = await getBestComment(chatLog, allComments)
         } else {
           selectedComment =
-            comments[Math.floor(Math.random() * comments.length)]
+            allComments[Math.floor(Math.random() * allComments.length)]
               .message
         }
         console.log('[customComments] selectedComment:', selectedComment)

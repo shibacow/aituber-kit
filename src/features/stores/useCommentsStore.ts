@@ -13,6 +13,7 @@ export type Comment = {
 type CommentsState = {
   comments: Comment[];
   addComment: (comment: Comment) => void;
+  clearComments: () => void;
 };
 
 export const useCommentsStore = create<CommentsState>((set) => ({
@@ -21,4 +22,5 @@ export const useCommentsStore = create<CommentsState>((set) => ({
     set((state) => ({
       comments: [...state.comments, comment],
     })),
+  clearComments: () => set({ comments: [] }),
 }));
