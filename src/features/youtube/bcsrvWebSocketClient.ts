@@ -1,8 +1,12 @@
-import { BcsvrAnyMessage, BcsvrConnectionState } from "@/features/types/types";
+import { useCommentsStore } from "@/features/stores/useCommentsStore";
+import {
+  BCSVR_MESSAGE_TYPE,
+  BcsvrAnyMessage,
+} from "@/types/types";
 
 export type BcsrvWebSocketHandlers = {
   onOpen?: (event: Event) => void
-  onMessage?: (message: unknown, rawEvent: MessageEvent) => void
+  onMessage?: (message: BcsvrAnyMessage, rawEvent: MessageEvent) => void
   onError?: (event: Event) => void
   onClose?: (event: CloseEvent) => void
 }
@@ -20,15 +24,14 @@ const buildWebSocketUrl = (): string => {
 }
 
 
-const handleMessage=(data: string): unknown =>{
+const handleMessage=(data: string): BcsvrAnyMessage | undefined => {
   if (data.startsWith("MSG\t")) {
     const parts = data.split("\t");
     if (parts.length >= 3) {
-      const channel = parts[1];
+      // const channel = parts[1];
       const json = parts[2];
       try{
           const message = JSON.parse(json) as BcsvrAnyMessage;
-          console.log(message);
           return message;
         } catch (error) {
           // eslint-disable-next-line no-console
@@ -37,11 +40,13 @@ const handleMessage=(data: string): unknown =>{
             error,
             json,
           );
+          return undefined;
         }
       }
     } else if (data.startsWith("ACK\t")) {
-    console.log(data);
+    // console.log(data);
   }
+  return undefined;
 }
 
 
@@ -59,7 +64,7 @@ export class BcsrvWebSocketClient {
     if (typeof WebSocket === 'undefined') {
       throw new Error('WebSocket is not available in this environment')
     }
-    console.log(process.env.NEXT_PUBLIC_BCSRV_WEBSOCKET_URL)
+    // console.log(process.env.NEXT_PUBLIC_BCSRV_WEBSOCKET_URL)
 
     const ws = new WebSocket(buildWebSocketUrl());
     ws.addEventListener('open', (event) => {
@@ -69,8 +74,17 @@ export class BcsrvWebSocketClient {
     })
     ws.addEventListener('message', (event) => {
       const parsed =  handleMessage(event.data)
-      console.log(parsed);
-      this.handlers.onMessage?.(parsed, event)
+      if (parsed) {
+        if (parsed.t === BCSVR_MESSAGE_TYPE.COMMENT) {
+          useCommentsStore.getState().addComment({
+            id: parsed.lci,
+            userName: parsed.ac,
+            message: parsed.cm,
+            timestamp: new Date(parsed.created_at * 1000).toISOString(),
+          });
+        }
+        this.handlers.onMessage?.(parsed, event)
+      }
     })
     ws.addEventListener('error', (event) => this.handlers.onError?.(event))
     ws.addEventListener('close', (event) => {
@@ -84,7 +98,7 @@ export class BcsrvWebSocketClient {
   private sub(): void {
       if (this.websocket?.readyState === WebSocket.OPEN) {
         const bcsrvKey = process.env.NEXT_PUBLIC_BCSRV_KEY
-        console.log(`SUB\t${bcsrvKey}`);
+        // console.log(`SUB\t${bcsrvKey}`);
         this.websocket.send(`SUB\t${bcsrvKey}`)
       }
   }
@@ -100,7 +114,7 @@ export class BcsrvWebSocketClient {
   private unsub():void {
       if (this.websocket?.readyState === WebSocket.OPEN) {
         const bcsrvKey = process.env.NEXT_PUBLIC_BCSRV_KEY
-        console.log(`UNS\t${bcsrvKey}`);
+        // console.log(`UNS\t${bcsrvKey}`);
         this.websocket.send(`UNS\t${bcsrvKey}`)
       }
 
