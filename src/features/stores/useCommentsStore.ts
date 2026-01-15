@@ -5,6 +5,7 @@ import { create } from 'zustand';
 export type Comment = {
   id: string;
   userName: string;
+  userIconUrl?: string; // Add userIconUrl from CustomComment (optional)
   message: string;
   timestamp: string;
 };

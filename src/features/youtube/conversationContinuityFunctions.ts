@@ -99,9 +99,13 @@ const getLastMessages = (
  * @param {any[]} youtubeComments - Youtubeのコメントの配列
  * @returns {Promise<string>} - 最適なコメント
  */
+import { Comment } from '@/features/stores/useCommentsStore'
+
+// ... (existing imports)
+
 export const getBestComment = async (
   messages: Message[],
-  youtubeComments: any[]
+  youtubeComments: Comment[]
 ): Promise<string> => {
   console.log('getBestComment')
   const lastTenMessages = getLastMessages(messages, 10)
@@ -134,7 +138,7 @@ ${lastTenMessages}
       role: 'user',
       content:
         '[\n' +
-        youtubeComments.map((comment) => comment.userComment).join(',\n') +
+        youtubeComments.map((comment) => comment.message).join(',\n') +
         '\n]',
     },
   ]
