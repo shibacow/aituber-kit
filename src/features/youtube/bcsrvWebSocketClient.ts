@@ -80,9 +80,18 @@ export class BcsrvWebSocketClient {
     const body = typeof payload === 'string' ? payload : JSON.stringify(payload)
     this.websocket.send(body)
   }
+  private unsub():void {
+      if (this.websocket?.readyState === WebSocket.OPEN) {
+        const bcsrvKey = process.env.NEXT_PUBLIC_BCSRV_KEY
+        console.log(`UNS\t${bcsrvKey}`);
+        this.websocket.send(`UNS\t${bcsrvKey}`)
+      }
+
+  }
 
   disconnect(): void {
     this.stopPing()
+    this.unsub()
     this.websocket?.close()
     this.websocket = null
   }
