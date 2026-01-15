@@ -37,11 +37,11 @@ const useYoutube = ({ handleSendChat }: Params) => {
     if (!youtubePlaying) return
     fetchAndProcessCommentsCallback()
 
-    const intervalId = setInterval(() => {
-      fetchAndProcessCommentsCallback()
-    }, INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS)
+     const intervalId = setInterval(() => {
+       fetchAndProcessCommentsCallback()
+     }, INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS)
 
-    return () => clearInterval(intervalId)
+     return () => clearInterval(intervalId)
   }, [youtubePlaying, fetchAndProcessCommentsCallback])
 
   useEffect(() => {

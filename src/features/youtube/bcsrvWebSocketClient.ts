@@ -1,9 +1,12 @@
+import { BcsvrAnyMessage, BcsvrConnectionState } from "@/features/types/types";
+
 export type BcsrvWebSocketHandlers = {
   onOpen?: (event: Event) => void
   onMessage?: (message: unknown, rawEvent: MessageEvent) => void
   onError?: (event: Event) => void
   onClose?: (event: CloseEvent) => void
 }
+
 
 const buildWebSocketUrl = (): string => {
   const endpoint = process.env.NEXT_PUBLIC_BCSRV_WEBSOCKET_URL;
@@ -16,17 +19,31 @@ const buildWebSocketUrl = (): string => {
   return url.toString()
 }
 
-const parseMessage = (data: MessageEvent['data']): unknown => {
-  if (typeof data !== 'string') {
-    return data
-  }
 
-  try {
-    return JSON.parse(data)
-  } catch {
-    return data
+const handleMessage=(data: string): unknown =>{
+  if (data.startsWith("MSG\t")) {
+    const parts = data.split("\t");
+    if (parts.length >= 3) {
+      const channel = parts[1];
+      const json = parts[2];
+      try{
+          const message = JSON.parse(json) as BcsvrAnyMessage;
+          console.log(message);
+          return message;
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error(
+            "[BcsvrClient] Failed to parse message:",
+            error,
+            json,
+          );
+        }
+      }
+    } else if (data.startsWith("ACK\t")) {
+    console.log(data);
   }
 }
+
 
 export class BcsrvWebSocketClient {
   private websocket: WebSocket | null = null
@@ -51,7 +68,7 @@ export class BcsrvWebSocketClient {
       this.handlers.onOpen?.(event)
     })
     ws.addEventListener('message', (event) => {
-      const parsed = parseMessage(event.data)
+      const parsed =  handleMessage(event.data)
       console.log(parsed);
       this.handlers.onMessage?.(parsed, event)
     })
